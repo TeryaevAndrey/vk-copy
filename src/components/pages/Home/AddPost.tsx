@@ -3,12 +3,26 @@ import { Box } from "@mui/system";
 import { TextField } from "@mui/material";
 import { TypeSetState } from "../../../types";
 import {IPost} from "../../../types";
+import { users } from "../../layout/Sidebar/dataUsers";
 
 interface IAddPost {
   setPosts: TypeSetState<IPost[]>
 }
 
-const AddPost: FC<IAddPost> = () => {
+const AddPost: FC<IAddPost> = ({setPosts}) => {
+  const [content, setContent] = React.useState<string>("");
+
+  const addPostHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === "Enter") {
+      setPosts(prev => [{
+        author: users[0],
+        content,
+        createdAt: "5 минут назад",
+      }, ...prev]);
+      setContent("");
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -26,6 +40,9 @@ const AddPost: FC<IAddPost> = () => {
         sx={{
           width: "100%"
         }}
+        onKeyPress={addPostHandler}
+        onChange={e => setContent(e.target.value)}
+        value={content}
       />
     </Box>
   );
