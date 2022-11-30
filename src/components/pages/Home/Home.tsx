@@ -1,11 +1,12 @@
-import { Button } from '@mui/material';
 import React from 'react';
+import {Box} from "@mui/material";
+import AddPost from './AddPost';
 
 const Home = () => {
   return (
-    <div>
-      Home
-    </div>
+    <Box>
+      <AddPost />
+    </Box>
   );
 };
 
