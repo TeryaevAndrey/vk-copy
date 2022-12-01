@@ -1,23 +1,21 @@
 import React, {FC} from 'react';
 import { Route, Routes as RoutesList } from 'react-router-dom';
+import Auth from '../pages/Auth/Auth';
+import { useAuth } from '../providers/useAuth';
 import { routes } from './List';
 
 const Routes:FC = () => {
-  const isAuth = true;
+  const {user} = useAuth();
 
   return (
     <>
       <RoutesList>
         {routes.map(route => {
-          if(route.auth && !isAuth) {
-            return false;
-          }
-
           return (
             <Route
               path={route.path}
               key={`route ${route.path}`}
-              element={<route.component />}
+              element={route.auth && !user ? <Auth /> : <route.component />}
             /> 
           )
         })}

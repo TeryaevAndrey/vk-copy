@@ -2,8 +2,13 @@ import { Alert, Button, ButtonGroup, Grid, TextField } from "@mui/material";
 import React, { FC } from "react";
 import { IUserData } from "./types";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "../../providers/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Auth: FC = () => {
+  const {ga, user} = useAuth();
+  const navigate = useNavigate();
+
   const [isRegForm, setIsRegForm] = React.useState<boolean>(false);
   const [userData, setUserData] = React.useState<IUserData>({
     email: "",
@@ -13,12 +18,10 @@ const Auth: FC = () => {
 
   const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const auth = getAuth();
-
     if (isRegForm) {
       try {
         await createUserWithEmailAndPassword(
-          auth,
+          ga,
           userData.email,
           userData.password
         );
@@ -28,7 +31,7 @@ const Auth: FC = () => {
     } else {
       try {
         await signInWithEmailAndPassword(
-          auth,
+          ga,
           userData.email,
           userData.password
         )
@@ -42,6 +45,13 @@ const Auth: FC = () => {
       password: "",
     });
   };
+
+  React.useEffect(() => {
+    if(user) {
+      navigate("/");
+    }
+    // eslint-disable-next-line
+  }, [user]);
 
   return (
     <>

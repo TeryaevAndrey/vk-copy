@@ -3,6 +3,7 @@ import { IUser, TypeSetState } from "../../types";
 import firebase from "firebase/app";
 import { getAuth, onAuthStateChanged, Auth } from "firebase/auth";
 import { users } from "../layout/Sidebar/dataUsers";
+import { useNavigate } from "react-router-dom";
 
 interface IContext {
   user: IUser | null;
@@ -10,7 +11,7 @@ interface IContext {
   ga: Auth
 }
 
-const AuthContext = React.createContext<IContext>({} as IContext);
+export const AuthContext = React.createContext<IContext>({} as IContext);
 
 interface IAuthProvider {
   children: React.ReactNode
@@ -23,11 +24,15 @@ export const AuthProvider: FC<IAuthProvider> = ({children}) => {
 
   React.useEffect(() => {
     const unListen = onAuthStateChanged(ga, authUser => {
-      setUser(authUser ? {
+      if(authUser) {
+        setUser({
           _id: authUser.uid,
           avatar: users[1].avatar,
-          name: authUser?.displayName || ""
-      } : null);
+          name: authUser?.displayName || "",
+        })
+      } else {
+        setUser(null);
+      }
     });
 
     return () => {
@@ -40,9 +45,7 @@ export const AuthProvider: FC<IAuthProvider> = ({children}) => {
   }), [user, ga]);
 
   return(
-    <AuthContext.Provider value={{
-      user, setUser, ga: getAuth()
-    }}>
+    <AuthContext.Provider value={values}>
       {children}
     </AuthContext.Provider>
   );
