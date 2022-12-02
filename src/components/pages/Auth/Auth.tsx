@@ -1,7 +1,7 @@
 import { Alert, Button, ButtonGroup, Grid, TextField } from "@mui/material";
 import React, { FC } from "react";
 import { IUserData } from "./types";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useAuth } from "../../providers/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +13,7 @@ const Auth: FC = () => {
   const [userData, setUserData] = React.useState<IUserData>({
     email: "",
     password: "",
+    name: ""
   } as IUserData);
   const [error, setError] = React.useState<string>("");
 
@@ -20,11 +21,15 @@ const Auth: FC = () => {
     e.preventDefault();
     if (isRegForm) {
       try {
-        await createUserWithEmailAndPassword(
+        const res = await createUserWithEmailAndPassword(
           ga,
           userData.email,
           userData.password
         );
+
+        await updateProfile(res.user, {
+          displayName: userData.name
+        })
       } catch (err: any) {
         err.message && setError(err.message);
       }
@@ -43,6 +48,7 @@ const Auth: FC = () => {
     setUserData({
       email: "",
       password: "",
+      name: ""
     });
   };
 
@@ -58,6 +64,17 @@ const Auth: FC = () => {
       {error && <Alert severity="error" style={{marginBottom: 20}}>{error}</Alert>}
       <Grid display="flex" justifyContent="center" alignItems="center">
         <form onSubmit={handleLogin}>
+          <TextField
+            type="text"
+            label="Name"
+            variant="outlined"
+            value={userData.name}
+            onChange={(e) =>
+              setUserData({ ...userData, name: e.target.value })
+            }
+            sx={{ display: "block", marginBottom: 3 }}
+            required
+          />
           <TextField
             type="email"
             label="Email"
