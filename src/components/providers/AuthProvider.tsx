@@ -4,11 +4,13 @@ import firebase from "firebase/app";
 import { getAuth, onAuthStateChanged, Auth } from "firebase/auth";
 import { users } from "../layout/Sidebar/dataUsers";
 import { useNavigate } from "react-router-dom";
+import {Firestore, getFirestore} from "firebase/firestore";
 
 interface IContext {
   user: IUser | null;
   setUser: TypeSetState<IUser | null>;
-  ga: Auth
+  ga: Auth;
+  db: Firestore
 }
 
 export const AuthContext = React.createContext<IContext>({} as IContext);
@@ -21,6 +23,7 @@ export const AuthProvider: FC<IAuthProvider> = ({children}) => {
   const [user, setUser] = React.useState<IUser | null>(null);
 
   const ga = getAuth();
+  const db = getFirestore();
 
   React.useEffect(() => {
     const unListen = onAuthStateChanged(ga, authUser => {
@@ -41,8 +44,8 @@ export const AuthProvider: FC<IAuthProvider> = ({children}) => {
   }, []);
 
   const values = React.useMemo(() => ({
-    user, setUser, ga
-  }), [user, ga]);
+    user, setUser, ga, db
+  }), [user, ga, db]);
 
   return(
     <AuthContext.Provider value={values}>
