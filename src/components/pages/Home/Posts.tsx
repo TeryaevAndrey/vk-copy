@@ -1,10 +1,11 @@
 import React, { FC } from "react";
-import { Alert, Avatar, Box, ImageList, ImageListItem } from "@mui/material";
+import { Avatar, Box, ImageList, ImageListItem } from "@mui/material";
 import { IPost } from "../../../types";
 import { Link } from "react-router-dom";
-import { collection, doc, onSnapshot, QuerySnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { useAuth } from "../../providers/useAuth";
 import { initialPosts } from "./InitialPosts";
+import Card from "../../ui/Card";
 
 const Posts: FC = () => {
   const { db } = useAuth();
@@ -25,15 +26,7 @@ const Posts: FC = () => {
   return (
     <>
       {posts.map((post, index) => (
-        <Box
-          sx={{
-            border: "1px solid #e2e2e2",
-            borderRadius: "10px",
-            padding: 2,
-            marginTop: 5,
-          }}
-          key={`Post-${index}`}
-        >
+        <Card key={index}>
           <Link
             key={post.author._id}
             to={`/profile/${post.author._id}`}
@@ -86,7 +79,7 @@ const Posts: FC = () => {
               ))}
             </ImageList>
           )}
-        </Box>
+        </Card>
       ))}
     </>
   );

@@ -1,10 +1,16 @@
+import { Avatar } from '@mui/material';
 import React, {FC} from 'react';
+import { useAuth } from '../../providers/useAuth';
+import Card from "../../ui/Card";
 
 const Profile: FC = () => {
+  const {user} = useAuth();
+
   return (
-    <div>
-        Profile
-    </div>
+    <Card>
+        <Avatar src={user?.avatar} alt="avatar" />
+        <h1>{user?.name}</h1>
+    </Card>
   );
 };
 
